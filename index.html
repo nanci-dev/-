@@ -74,40 +74,18 @@ h1 span{background:linear-gradient(135deg,#007aff,#34c759,#ff9500);-webkit-backg
 .sub{font-size:16px;color:#8e8e93;margin-bottom:48px;letter-spacing:0.5px}
 .sub b{color:#1c1c1e;font-weight:700}
 
-/* 搜索框 */
-.search-wrap{
-  max-width:520px;
-  margin-bottom:56px;
-  position:relative;
-}
+.search-wrap{max-width:520px;margin-bottom:56px;position:relative}
 .search-wrap input{
-  width:100%;
-  padding:14px 20px 14px 48px;
-  border-radius:16px;
+  width:100%;padding:14px 20px 14px 48px;border-radius:16px;
   border:1px solid rgba(0,0,0,0.06);
   background:rgba(255,255,255,0.9);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  font-family:inherit;
-  font-size:15px;
-  color:#1c1c1e;
-  outline:none;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  font-family:inherit;font-size:15px;color:#1c1c1e;outline:none;
   box-shadow:0 4px 16px rgba(0,0,0,0.04);
   transition:box-shadow 0.3s,border-color 0.3s;
 }
-.search-wrap input:focus{
-  border-color:#a8c7fa;
-  box-shadow:0 8px 24px rgba(0,122,255,0.12);
-}
-.search-wrap .icon{
-  position:absolute;
-  left:18px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#8e8e93;
-  font-size:16px;
-  pointer-events:none;
-}
+.search-wrap input:focus{border-color:#a8c7fa;box-shadow:0 8px 24px rgba(0,122,255,0.12)}
+.search-wrap .icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:#8e8e93;font-size:16px;pointer-events:none}
 
 .section-title{font-size:12px;font-weight:700;letter-spacing:4px;color:#8e8e93;text-transform:uppercase;margin:56px 0 20px}
 .links{display:grid;grid-template-columns:1fr;gap:16px}
@@ -116,10 +94,8 @@ h1 span{background:linear-gradient(135deg,#007aff,#34c759,#ff9500);-webkit-backg
 
 .link{
   display:flex;align-items:center;justify-content:space-between;
-  padding:22px 26px;
-  background:rgba(255,255,255,0.9);
-  border:1px solid rgba(0,0,0,0.05);
-  border-radius:20px;
+  padding:22px 26px;background:rgba(255,255,255,0.9);
+  border:1px solid rgba(0,0,0,0.05);border-radius:20px;
   text-decoration:none;color:#1c1c1e;
   transition:transform 0.35s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s,background 0.35s,border-color 0.35s;
   position:relative;overflow:hidden;
@@ -148,33 +124,20 @@ h1 span{background:linear-gradient(135deg,#007aff,#34c759,#ff9500);-webkit-backg
 .reveal{opacity:0;transform:translateY(30px);transition:opacity 0.8s cubic-bezier(0.22,1,0.36,1),transform 0.8s cubic-bezier(0.22,1,0.36,1);will-change:opacity,transform}
 .reveal.in{opacity:1;transform:translateY(0)}
 
-/* 回到顶部 */
 .back-top{
-  position:fixed;
-  bottom:32px;
-  right:24px;
-  z-index:15;
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  border:none;
+  position:fixed;bottom:32px;right:24px;z-index:15;
+  width:48px;height:48px;border-radius:50%;border:none;
   background:rgba(255,255,255,0.95);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  color:#007aff;
-  font-size:20px;
-  cursor:pointer;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  color:#007aff;font-size:20px;cursor:pointer;
   box-shadow:0 8px 24px rgba(0,0,0,0.1);
-  opacity:0;
-  visibility:hidden;
-  transform:translateY(20px);
+  opacity:0;visibility:hidden;transform:translateY(20px);
   transition:opacity 0.35s,visibility 0.35s,transform 0.35s,box-shadow 0.3s;
   outline:none;
 }
 .back-top.show{opacity:1;visibility:visible;transform:translateY(0)}
 .back-top:hover{box-shadow:0 12px 32px rgba(0,122,255,0.2)}
 
-/* 公告 */
 .modal-mask{position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:opacity 0.35s ease,visibility 0.35s ease}
 .modal-mask.show{opacity:1;visibility:visible}
 .modal{width:100%;max-width:720px;background:rgba(255,255,255,0.98);border:1px solid rgba(0,0,0,0.05);border-radius:24px;padding:40px;box-shadow:0 24px 80px rgba(0,0,0,0.2);transform:translateY(20px) scale(0.96);transition:transform 0.4s cubic-bezier(0.22,1,0.36,1)}
@@ -218,14 +181,13 @@ h1 span{background:linear-gradient(135deg,#007aff,#34c759,#ff9500);-webkit-backg
 </div>
 
 <div class="wrap">
-  <div class="tag reveal" data-i18n="tag">// 幻灵终端下载主站</div>
+  <div class="tag reveal" data-i18n="tag">// 幻灵终端下载副站</div>
   <h1 class="reveal">NANCI<br><span data-i18n="appName">幻灵终端</span></h1>
   <p class="sub reveal">
     <span data-i18n="role">开发者</span> · <b>南辞</b> · 
     <span data-i18n="tags">玩机 / 开源 / 幻灵终端</span>
   </p>
 
-  <!-- 新功能：搜索框 -->
   <div class="search-wrap reveal">
     <span class="icon">🔍</span>
     <input type="text" id="searchInput" placeholder="搜索功能..." oninput="filterLinks(this.value)">
@@ -287,7 +249,6 @@ h1 span{background:linear-gradient(135deg,#007aff,#34c759,#ff9500);-webkit-backg
   </div>
 </div>
 
-<!-- 回到顶部按钮 -->
 <button class="back-top" id="backTop" onclick="scrollToTop()">↑</button>
 
 <div class="modal-mask" id="notice">
@@ -296,7 +257,7 @@ h1 span{background:linear-gradient(135deg,#007aff,#34c759,#ff9500);-webkit-backg
     <p data-i18n="noticeBody1">已增加加速下载入口，无 VPN 用户可使用加速入口。</p>
     <p data-i18n="noticeBody2">有 VPN 的用户也可使用无加速入口，速度更快、更稳定。</p>
     <p data-i18n="noticeBody3">推荐优先使用加速入口，体验更顺畅。</p>
-    <p data-i18n="noticeBody4">当前为幻灵终端下载主站，考虑到用户没有 VPN，所以开发了副站。目前只提供源码，不提供 APK，后续版本可能会提供，请大家遵守开源协议。</p>
+    <p data-i18n="noticeBody4">当前为幻灵终端下载副站，考虑到用户没有 VPN，所以开发了副站。目前只提供源码，不提供 APK，后续版本可能会提供，请大家遵守开源协议。</p>
     <p data-i18n="noticeBody5">南辞的 QQ：3136806069，欢迎大家提供意见。也可以关注南辞的快手主页，获取最新动态。</p>
     <div class="actions">
       <button class="btn btn-primary" onclick="closeNotice()" data-i18n="noticeOk">我知道了</button>
@@ -307,7 +268,7 @@ h1 span{background:linear-gradient(135deg,#007aff,#34c759,#ff9500);-webkit-backg
 <script>
 var i18n={
 zh:{
-  tag:"// 幻灵终端下载主站",
+  tag:"// 幻灵终端下载副站",
   appName:"幻灵终端",
   role:"开发者",
   tags:"玩机 / 开源 / 幻灵终端",
@@ -333,7 +294,7 @@ zh:{
   noticeBody1:"已增加加速下载入口，无 VPN 用户可使用加速入口。",
   noticeBody2:"有 VPN 的用户也可使用无加速入口，速度更快、更稳定。",
   noticeBody3:"推荐优先使用加速入口，体验更顺畅。",
-  noticeBody4:"当前为幻灵终端下载主站，考虑到用户没有 VPN，所以开发了副站。目前只提供源码，不提供 APK，后续版本可能会提供，请大家遵守开源协议。",
+  noticeBody4:"当前为幻灵终端下载副站，考虑到用户没有 VPN，所以开发了副站。目前只提供源码，不提供 APK，后续版本可能会提供，请大家遵守开源协议。",
   noticeBody5:"南辞的 QQ：3136806069，欢迎大家提供意见。也可以关注南辞的快手主页，获取最新动态。",
   noticeOk:"我知道了",
   hideFloat:"隐藏悬浮窗",
@@ -416,7 +377,6 @@ function updateFloatText(){
   t.textContent = nav.classList.contains('hidden') ? d.showFloat : d.hideFloat;
 }
 
-/* 搜索过滤 */
 function filterLinks(keyword){
   keyword = keyword.toLowerCase().trim();
   document.querySelectorAll('.link').forEach(function(el){
@@ -429,7 +389,6 @@ function filterLinks(keyword){
   });
 }
 
-/* 回到顶部 */
 function scrollToTop(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
