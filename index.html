@@ -1,298 +1,225 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LiteMask</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
 body{
-  background:#f2f4f8;
-  color:#1f2937;
-  font-family:"SF Mono",Menlo,Consolas,monospace;
-  overflow-x:hidden;
-  position:relative;
-  min-height:100vh;
+  background:linear-gradient(135deg,#eef2ff 0%,#fdf2f8 50%,#f0f9ff 100%);
+  color:#1e293b;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei",sans-serif;
+  overflow-x:hidden;position:relative;min-height:100vh;-webkit-font-smoothing:antialiased;
 }
-
-/* ===== 粉色呼吸光晕 ===== */
 body::before{
-  content:"";
-  position:fixed;
-  top:50%;left:50%;
-  width:140vmax;height:140vmax;
-  transform:translate(-50%,-50%);
-  background:radial-gradient(
-    circle at center,
-    rgba(255,0,60,0.14) 0%,
-    rgba(255,0,60,0.06) 25%,
-    rgba(255,0,60,0.01) 50%,
-    transparent 70%
-  );
-  pointer-events:none;z-index:0;
-  animation:breathe 6s ease-in-out infinite;
+  content:"";position:fixed;top:-20%;left:-10%;width:60vmax;height:60vmax;
+  background:radial-gradient(circle,rgba(168,85,247,0.15) 0%,transparent 70%);
+  border-radius:50%;pointer-events:none;z-index:0;
+  animation:float1 20s ease-in-out infinite;will-change:transform;
 }
-@keyframes breathe{
-  0%,100%{opacity:0.6;transform:translate(-50%,-50%) scale(1)}
-  50%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}
-}
+@keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,60px)}}
 
-/* ===== 浅色网格 ===== */
-.grid{
-  position:fixed;inset:0;
-  background-image:
-    linear-gradient(rgba(255,0,60,0.06) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,0,60,0.06) 1px,transparent 1px);
-  background-size:40px 40px;
-  pointer-events:none;z-index:0;
+.setting-btn{
+  position:fixed;top:24px;right:24px;z-index:30;width:44px;height:44px;border-radius:14px;
+  background:rgba(255,255,255,0.75);border:1px solid rgba(255,255,255,0.9);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:0 8px 24px rgba(100,116,139,0.12);
+  transition:transform 0.4s cubic-bezier(0.22,1,0.36,1),box-shadow 0.3s,color 0.3s;
+  font-size:18px;color:#64748b;user-select:none;
 }
+.setting-btn:hover{box-shadow:0 12px 32px rgba(168,85,247,0.2);color:#7c3aed}
+.setting-btn.spin{transform:rotate(90deg)}
 
-/* ===== 光线扫描 ===== */
-body::after{
-  content:"";
-  position:fixed;left:0;right:0;height:160px;
-  background:linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(255,0,60,0.05) 30%,
-    rgba(255,0,60,0.18) 50%,
-    rgba(255,0,60,0.05) 70%,
-    transparent 100%
-  );
-  pointer-events:none;z-index:1;
-  animation:scan 5s linear infinite;
+.setting-panel{
+  position:fixed;top:80px;right:24px;z-index:29;width:190px;max-height:0;overflow:hidden;
+  background:rgba(255,255,255,0.92);border:1px solid rgba(255,255,255,0.9);
+  border-radius:16px;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  box-shadow:0 16px 48px rgba(100,116,139,0.15);
+  transition:max-height 0.45s cubic-bezier(0.22,1,0.36,1),padding 0.3s ease;padding:0;
 }
-@keyframes scan{
-  0%{top:-160px}
-  100%{top:100vh}
+.setting-panel.show{max-height:520px;padding:8px;overflow-y:auto}
+.setting-panel .item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;border-radius:10px;font-size:13px;color:#475569;cursor:pointer;
+  transition:background 0.2s,color 0.2s;
 }
+.setting-panel .item:hover{background:rgba(168,85,247,0.08);color:#7c3aed}
+.setting-panel .item.active{color:#7c3aed;font-weight:600;background:rgba(168,85,247,0.1)}
+.setting-panel .item.active::after{content:"✓"}
+.setting-panel .divider{height:1px;background:rgba(148,163,184,0.2);margin:6px 4px}
 
-/* ===== 语言切换 ===== */
-.lang-switch{
-  position:fixed;
-  top:20px;right:20px;
-  z-index:10;
-  display:flex;gap:6px;
-  background:rgba(255,255,255,0.8);
-  border:1px solid #e5e7eb;
-  padding:4px;border-radius:8px;
-  backdrop-filter:blur(8px);
-  box-shadow:0 2px 10px rgba(0,0,0,0.04);
+.float-nav{
+  position:fixed;right:20px;top:50%;transform:translateY(-50%);
+  z-index:20;display:flex;flex-direction:column;gap:12px;
+  transition:opacity 0.4s ease,transform 0.4s ease,visibility 0.4s;
 }
-.lang-switch button{
-  border:none;background:transparent;
-  color:#6b7280;font-family:inherit;
-  font-size:12px;font-weight:700;
-  padding:6px 10px;border-radius:6px;
-  cursor:pointer;transition:all 0.2s;
+.float-nav.hidden{opacity:0;visibility:hidden;transform:translateY(-50%) translateX(80px)}
+.float-btn{
+  padding:12px 18px;background:rgba(255,255,255,0.7);
+  border:1px solid rgba(255,255,255,0.9);border-radius:14px;
+  text-decoration:none;color:#334155;font-size:12px;font-weight:600;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:0 8px 24px rgba(100,116,139,0.1);
+  transition:transform 0.35s cubic-bezier(0.22,1,0.36,1),box-shadow 0.3s,background 0.3s,color 0.3s;
+  white-space:nowrap;
 }
-.lang-switch button.active{background:#e11d48;color:#fff}
-.lang-switch button:hover:not(.active){color:#e11d48}
+.float-btn:hover{background:rgba(255,255,255,0.95);transform:translateX(-6px);box-shadow:0 12px 32px rgba(168,85,247,0.2);color:#7c3aed}
 
-/* ===== 内容（加宽加长） ===== */
-.wrap{
-  position:relative;z-index:2;
-  width:100%;
-  max-width:1080px;   /* 原来 720 → 1080 */
-  margin:0 auto;
-  padding:100px 40px 200px;  /* 上下留白加大 */
-}
+.wrap{position:relative;z-index:2;width:100%;max-width:1080px;margin:0 auto;padding:120px 40px 200px}
 .tag{
-  display:inline-block;
-  font-size:12px;letter-spacing:4px;
-  color:#e11d48;
-  border:1px solid #e11d48;
-  padding:4px 10px;margin-bottom:32px;
-  background:rgba(255,255,255,0.6);
-  box-shadow:0 0 12px rgba(225,29,72,0.2);
+  display:inline-block;font-size:11px;letter-spacing:4px;color:#7c3aed;
+  border:1px solid rgba(124,58,237,0.3);padding:6px 14px;margin-bottom:32px;
+  border-radius:999px;background:rgba(255,255,255,0.6);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-weight:600;
 }
-h1{
-  font-size:clamp(48px,10vw,96px);  /* 更大 */
-  font-weight:900;
-  line-height:1.05;
-  letter-spacing:-3px;
-  color:#0f1115;
-  margin-bottom:16px;
-}
-h1 span{
-  color:#e11d48;
-  text-shadow:0 0 24px rgba(225,29,72,0.4);
-}
-.sub{
-  font-size:16px;color:#6b7280;
-  margin-bottom:64px;letter-spacing:1px;
-}
-.sub b{color:#0f1115}
-
-.section-title{
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:4px;
-  color:#9ca3af;
-  text-transform:uppercase;
-  margin:48px 0 16px;
-}
-
-.links{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:14px;
-}
-@media(min-width:560px){
-  .links{grid-template-columns:1fr 1fr}
-}
-@media(min-width:900px){
-  .links{grid-template-columns:1fr 1fr 1fr}  /* 宽屏三列 */
-}
+h1{font-size:clamp(48px,10vw,96px);font-weight:800;line-height:1.05;letter-spacing:-3px;color:#0f172a;margin-bottom:16px}
+h1 span{background:linear-gradient(135deg,#a855f7,#3b82f6,#ec4899);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.sub{font-size:16px;color:#64748b;margin-bottom:64px;letter-spacing:0.5px}
+.sub b{color:#0f172a;font-weight:700}
+.section-title{font-size:12px;font-weight:700;letter-spacing:4px;color:#94a3b8;text-transform:uppercase;margin:56px 0 20px}
+.links{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:560px){.links{grid-template-columns:1fr 1fr}}
+@media(min-width:900px){.links{grid-template-columns:1fr 1fr 1fr}}
 
 .link{
   display:flex;align-items:center;justify-content:space-between;
-  padding:20px 24px;
-  background:rgba(255,255,255,0.7);
-  border:1px solid #e5e7eb;
-  text-decoration:none;color:#1f2937;
-  transition:all 0.3s cubic-bezier(0.22,1,0.36,1);
-  position:relative;overflow:hidden;
-  backdrop-filter:blur(6px);
-  min-height:76px;
+  padding:22px 26px;background:rgba(255,255,255,0.6);
+  border:1px solid rgba(255,255,255,0.9);border-radius:18px;
+  text-decoration:none;color:#1e293b;
+  transition:transform 0.35s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s,background 0.35s,border-color 0.35s;
+  position:relative;overflow:hidden;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:0 8px 24px rgba(100,116,139,0.08);min-height:80px;outline:none;
 }
-.link::before{
-  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
-  background:#e11d48;transform:scaleY(0);
-  transition:transform 0.3s cubic-bezier(0.22,1,0.36,1);
-  box-shadow:0 0 10px #e11d48;
+.link:hover{background:rgba(255,255,255,0.95);transform:translateY(-4px);box-shadow:0 16px 40px rgba(168,85,247,0.15);border-color:rgba(168,85,247,0.4)}
+.link .name{font-size:15px;font-weight:700;color:#0f172a}
+.link .desc{font-size:11px;color:#94a3b8;margin-top:4px}
+.link .arrow{color:#a855f7;font-size:18px;font-weight:700;transition:transform 0.35s cubic-bezier(0.22,1,0.36,1)}
+.link:hover .arrow{transform:translateX(6px)}
+.link:active{transform:scale(0.97)}
+.link::after{
+  content:"";position:absolute;top:50%;left:50%;width:0;height:0;
+  background:radial-gradient(circle,rgba(168,85,247,0.35) 0%,rgba(168,85,247,0) 70%);
+  border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;opacity:0;
+  transition:width 0.6s ease,height 0.6s ease,opacity 0.6s ease;
 }
-.link:hover{
-  border-color:#e11d48;background:#fff;
-  transform:translateX(4px);
-  box-shadow:0 4px 20px rgba(225,29,72,0.12);
-}
-.link:hover::before{transform:scaleY(1)}
-.link .name{font-size:15px;font-weight:700}
-.link .desc{font-size:11px;color:#9ca3af;margin-top:4px}
-.link .arrow{
-  color:#e11d48;font-size:18px;
-  transition:transform 0.3s cubic-bezier(0.22,1,0.36,1);
-}
-.link:hover .arrow{transform:translateX(4px)}
-.link.recommend{
-  border-color:#e11d48;background:#fff;
-  box-shadow:0 4px 20px rgba(225,29,72,0.15);
-}
-.link.recommend .name{color:#e11d48}
+.link:active::after{width:400px;height:400px;opacity:1;transition:0s}
 
-/* 个人主页卡片特殊样式 */
-.link.profile{
-  grid-column:1/-1;
-  background:linear-gradient(135deg,#fff,rgba(255,0,60,0.04));
-  border-color:#e11d48;
-  min-height:96px;
-}
-.link.profile .name{font-size:20px;color:#e11d48}
-.link.profile .desc{font-size:12px;color:#6b7280}
+.link.recommend{background:linear-gradient(135deg,rgba(168,85,247,0.12),rgba(59,130,246,0.08));border-color:rgba(168,85,247,0.4)}
+.link.recommend .name{background:linear-gradient(135deg,#a855f7,#3b82f6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.link.profile{grid-column:1/-1;background:linear-gradient(135deg,rgba(168,85,247,0.1),rgba(236,72,153,0.08));border-color:rgba(168,85,247,0.35);min-height:100px}
+.link.profile .name{font-size:20px;color:#7c3aed}
 
-.footer{
-  margin-top:80px;padding-top:32px;
-  border-top:1px dashed #d1d5db;
-  font-size:12px;color:#9ca3af;
-  display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
-}
-.footer .dot{color:#e11d48;text-shadow:0 0 8px rgba(225,29,72,0.5)}
+.footer{margin-top:96px;padding-top:36px;border-top:1px solid rgba(148,163,184,0.2);font-size:12px;color:#94a3b8;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer .dot{color:#a855f7}
 
-.reveal{
-  opacity:0;transform:translateY(40px);
-  transition:opacity 0.9s cubic-bezier(0.22,1,0.36,1),
-             transform 0.9s cubic-bezier(0.22,1,0.36,1);
-}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.8s cubic-bezier(0.22,1,0.36,1),transform 0.8s cubic-bezier(0.22,1,0.36,1);will-change:opacity,transform}
 .reveal.in{opacity:1;transform:translateY(0)}
-.links .reveal:nth-child(1){transition-delay:0s}
-.links .reveal:nth-child(2){transition-delay:0.06s}
-.links .reveal:nth-child(3){transition-delay:0.12s}
-.links .reveal:nth-child(4){transition-delay:0.18s}
-.links .reveal:nth-child(5){transition-delay:0.24s}
-.links .reveal:nth-child(6){transition-delay:0.30s}
-.links .reveal:nth-child(7){transition-delay:0.36s}
+
+.modal-mask{position:fixed;inset:0;background:rgba(15,23,42,0.4);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:opacity 0.35s ease,visibility 0.35s ease}
+.modal-mask.show{opacity:1;visibility:visible}
+.modal{width:100%;max-width:480px;background:rgba(255,255,255,0.96);border:1px solid rgba(255,255,255,0.9);border-radius:24px;padding:32px;backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);box-shadow:0 24px 80px rgba(100,116,139,0.25);transform:translateY(20px) scale(0.96);transition:transform 0.4s cubic-bezier(0.22,1,0.36,1)}
+.modal-mask.show .modal{transform:translateY(0) scale(1)}
+.modal h3{margin:0 0 16px;font-size:20px;font-weight:800;color:#0f172a}
+.modal h3 span{background:linear-gradient(135deg,#a855f7,#3b82f6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.modal p{margin:0 0 12px;font-size:14px;line-height:1.9;color:#475569}
+.modal .actions{margin-top:24px;display:flex;gap:12px}
+.modal .btn{flex:1;padding:14px;border:none;border-radius:14px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:transform 0.3s cubic-bezier(0.22,1,0.36,1),box-shadow 0.3s;outline:none}
+.modal .btn-primary{background:linear-gradient(135deg,#a855f7,#3b82f6);color:#fff;box-shadow:0 8px 24px rgba(168,85,247,0.3)}
+.modal .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(168,85,247,0.4)}
+.modal .btn-primary:active{transform:scale(0.97)}
+
+@media(max-width:720px){
+  .float-nav{right:12px;gap:8px}
+  .float-btn{padding:10px 14px;font-size:11px}
+  .wrap{padding:100px 24px 160px}
+  .setting-panel{width:160px;right:16px}
+}
 </style>
 </head>
 <body>
 
-<div class="grid"></div>
+<div class="setting-btn" id="settingBtn" onclick="toggleSetting()">⚙</div>
 
-<div class="lang-switch">
-  <button data-lang="en" class="active">EN</button>
-  <button data-lang="zh">中文</button>
+<div class="setting-panel" id="settingPanel">
+  <div class="item" data-lang="zh" onclick="setLang('zh')">中文</div>
+  <div class="item" data-lang="en" onclick="setLang('en')">English</div>
+  <div class="item" data-lang="ja" onclick="setLang('ja')">日本語</div>
+  <div class="item" data-lang="ko" onclick="setLang('ko')">한국어</div>
+  <div class="item" data-lang="fr" onclick="setLang('fr')">Français</div>
+  <div class="item" data-lang="de" onclick="setLang('de')">Deutsch</div>
+  <div class="item" data-lang="es" onclick="setLang('es')">Español</div>
+  <div class="item" data-lang="ru" onclick="setLang('ru')">Русский</div>
+  <div class="divider"></div>
+  <div class="item" onclick="toggleFloat()">🔘 <span id="floatToggleText">隐藏悬浮窗</span></div>
+</div>
+
+<div class="float-nav" id="floatNav">
+  <a class="float-btn" href="https://github.com/nanci-dev" target="_blank" data-i18n="floatProfile">个人主页（无加速）</a>
+  <a class="float-btn" href="https://github.com/nanci-dev/LiteMask" target="_blank" data-i18n="floatRepo">开源项目（无加速）</a>
+  <a class="float-btn" href="https://github.com/nanci-dev/LiteMask/releases" target="_blank" data-i18n="floatDownload">下载 Release（无加速）</a>
 </div>
 
 <div class="wrap">
-
-  <div class="tag reveal" data-i18n="tag">// SYSTEM ONLINE</div>
-  <h1 class="reveal">NANCI<br><span data-i18n="appName">LiteMask</span></h1>
+  <div class="tag reveal" data-i18n="tag">// 幻灵终端下载副站</div>
+  <h1 class="reveal">NANCI<br><span data-i18n="appName">幻灵终端</span></h1>
   <p class="sub reveal">
-    <span data-i18n="role">Developer</span> · <b>南辞</b> · 
-    <span data-i18n="tags">Modding / Open Source / Tinkering</span>
+    <span data-i18n="role">开发者</span> · <b>南辞</b> · 
+    <span data-i18n="tags">玩机 / 开源 / 幻灵终端</span>
   </p>
 
-  <!-- 个人主页 -->
-  <div class="section-title reveal" data-i18n="sectionProfile">// PROFILE</div>
+  <div class="section-title reveal" data-i18n="sectionProfile">// 个人主页</div>
   <div class="links">
-    <a class="link profile reveal" href="https://github.com/nanci-dev" target="_blank">
+    <a class="link profile reveal" href="https://gh-proxy.com/https://github.com/nanci-dev" target="_blank">
       <div>
-        <div class="name" data-i18n="profileName">南辞的个人主页</div>
-        <div class="desc" data-i18n="profileDesc">开发者主页 · 项目汇总 · 联系方式</div>
+        <div class="name" data-i18n="profileName">南辞的个人主页（GitHub主页）</div>
+        <div class="desc" data-i18n="profileDesc">开发者主页 · 联系方式</div>
       </div>
       <span class="arrow">→</span>
     </a>
   </div>
 
-  <!-- 下载区 -->
-  <div class="section-title reveal" data-i18n="sectionDownload">// DOWNLOAD</div>
+  <div class="section-title reveal" data-i18n="sectionDownload">// 下载</div>
   <div class="links">
 
-    <a class="link reveal recommend" href="https://pan.xunlei.com/s/VP3z3569N9Et8G0lN4xZ7WzNA1?pwd=gmxr" target="_blank">
+    <a class="link reveal recommend" href="https://gh-proxy.com/https://github.com/nanci-dev/LiteMask/releases" target="_blank">
       <div>
-        <div class="name" data-i18n="dl1">Lanzou Cloud</div>
-        <div class="desc" data-i18n="dl1d">Direct in China · No VPN</div>
+        <div class="name" data-i18n="dl3">GitHub 下载幻灵终端（加速）</div>
+        <div class="desc" data-i18n="dl3d">主站 · 无需 VPN</div>
       </div>
       <span class="arrow">→</span>
     </a>
 
-    <a class="link reveal" href="https://dl-e.feejii.com/storage/files/2026/09/29/9/5759769/1790693409837969.gz?t=6ad0b0f1&rlimit=20&us=VMd4hDQ38T&sign=1856050f2170dfa92e85a4f7b6b7b4f9&download_name=%E9%BB%91%E9%A9%AC%E5%8A%A0%E9%80%9F%E5%99%A8_7.8.7.9.apk&p=15864761-15864761-62898670781" target="_blank">
+    <a class="link reveal" href="https://gh-proxy.com/https://github.com/nanci-dev/LiteMask" target="_blank">
       <div>
-        <div class="name" data-i18n="dl5">Aliyun Drive</div>
-        <div class="desc" data-i18n="dl5d">Direct in China · Fast</div>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-
-    <a class="link reveal" href="https://github.com/nanci-dev/LiteMask" target="_blank">
-      <div>
-        <div class="name" data-i18n="dl2">Gitee Download</div>
-        <div class="desc" data-i18n="dl2d">Direct in China · Stable</div>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-
-    <a class="link reveal" href="https://gh-proxy.com/https://github.com/iill392/download-youlong/releases/download/111/yltool-V9.0.1.apk" target="_blank">
-      <div>
-        <div class="name" data-i18n="dl6">Quark Drive</div>
-        <div class="desc" data-i18n="dl6d">Direct in China</div>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-
-    <a class="link reveal" href="https://github.com/nanci-dev/LiteMask/releases" target="_blank">
-      <div>
-        <div class="name" data-i18n="dl3">GitHub Download</div>
-        <div class="desc" data-i18n="dl3d">Main site · VPN required</div>
+        <div class="name" data-i18n="dl2">LiteMask 开源项目（加速）</div>
+        <div class="desc" data-i18n="dl2d">无需 VPN · 稳定</div>
       </div>
       <span class="arrow">→</span>
     </a>
 
     <a class="link reveal" href="mailto:3932194646@qq.com">
       <div>
-        <div class="name" data-i18n="dl4">Contact Me</div>
-        <div class="desc" data-i18n="dl4d">Feedback / Collaboration</div>
+        <div class="name" data-i18n="dl4">联系我</div>
+        <div class="desc" data-i18n="dl4d">反馈问题 / 合作</div>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <a class="link reveal" href="https://dl-e.feejii.com/storage/files/2026/09/29/9/5759769/1790693409837969.gz?t=6ac7aa20&rlimit=20&us=AS8RyNm22m&sign=6d7f479323924a4e96080ab01ecb7b98&download_name=%E9%BB%91%E9%A9%AC%E5%8A%A0%E9%80%9F%E5%99%A8_7.8.7.9.apk&p=null-15553876-62898128589" target="_blank">
+      <div>
+        <div class="name" data-i18n="dl5">直连 VPN 下载</div>
+        <div class="desc" data-i18n="dl5d">点击下载 · 无需 VPN</div>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <a class="link reveal" href="https://pan.xunlei.com/s/VP3zPA0qD1FoizPfcoF0e9cXA1?pwd=zffd#" target="_blank">
+      <div>
+        <div class="name" data-i18n="dl6">幻灵直连</div>
+        <div class="desc" data-i18n="dl6d">国内直连 · 迅雷云盘</div>
       </div>
       <span class="arrow">→</span>
     </a>
@@ -300,94 +227,159 @@ h1 span{
   </div>
 
   <div class="footer reveal">
-    <span><span class="dot">●</span> <span data-i18n="slogan">Technology is no longer above the people, but serves the people</span></span>
+    <span><span class="dot">●</span> <span data-i18n="slogan">科技不再是高高在上，而是服务于人民</span></span>
     <span>© 2026 NANCI</span>
   </div>
+</div>
 
+<div class="modal-mask" id="notice">
+  <div class="modal">
+    <h3>📢 <span data-i18n="noticeTitle">公告</span></h3>
+    <p data-i18n="noticeBody1">已增加加速下载入口，无 VPN 用户可使用加速入口。</p>
+    <p data-i18n="noticeBody2">有 VPN 的用户也可使用无加速入口，速度更快、更稳定。</p>
+    <p data-i18n="noticeBody3">推荐优先使用加速入口，体验更顺畅。</p>
+    <p data-i18n="noticeBody4">当前为幻灵终端下载副站，考虑到用户没有 VPN，所以开发了副站。</p>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="closeNotice()" data-i18n="noticeOk">我知道了</button>
+    </div>
+  </div>
 </div>
 
 <script>
-var i18n = {
-  en: {
-    tag: "// If the English version is inconsistent with the Chinese version, it is recommended to switch to the Chinese version",
-    appName: "LiteMask",
-    role: "Developer",
-    tags: "Modding / Open Source / Tinkering",
-    sectionProfile: "// PROFILE",
-    profileName: "Nanci's Homepage",
-    profileDesc: "Developer homepage · Projects · Contact",
-    sectionDownload: "// DOWNLOAD",
-    dl1: "Lanzou Cloud",
-    dl1d: "Direct in China · No VPN",
-    dl2: "Gitee Download",
-    dl2d: "Direct in China · Stable",
-    dl3: "GitHub Download",
-    dl3d: "Main site · VPN required",
-    dl4: "Contact Me",
-    dl4d: "Feedback / Collaboration",
-    dl5: "Aliyun Drive",
-    dl5d: "Direct in China · Fast",
-    dl6: "Quark Drive",
-    dl6d: "Direct in China",
-    slogan: "Technology is no longer above the people, but serves the people"
-  },
-  zh: {
-    tag: "// 幻灵终端下载主站：https://github.com/nanci-dev/LiteMask",
-    appName: "幻灵终端",
-    role: "开发者",
-    tags: "玩机 / 开源 / LiteMask轻量级管理器已开源",
-    sectionProfile: "// 个人主页",
-    profileName: "南辞的个人主页（GitHub主页）",
-    profileDesc: "开发者主页 ·联系方式",
-    sectionDownload: "// 下载",
-    dl1: "迅雷下载幻灵终端",
-    dl1d: "国内直连 · 无需 VPN",
-    dl2: "LiteMask 开源项目",
-    dl2d: "需要VPN · 稳定",
-    dl3: "GitHub 下载幻灵终端",
-    dl3d: "主站 · 需 VPN 或加速器",
-    dl4: "联系我",
-    dl4d: "反馈问题 / 合作",
-    dl5: "免费VPN下载",
-    dl5d: "点击下载免费VPN · 可用于查看github",
-    dl6: "游龙工具下载",
-    dl6d: "国内直连",
-    slogan: "科技不再是高高在上，而是服务于人民"
-  }
+var i18n={
+zh:{
+  tag:"// 幻灵终端下载副站",
+  appName:"幻灵终端",
+  role:"开发者",
+  tags:"玩机 / 开源 / 幻灵终端",
+  sectionProfile:"// 个人主页",
+  profileName:"南辞的个人主页（GitHub主页）",
+  profileDesc:"开发者主页 · 联系方式",
+  sectionDownload:"// 下载",
+  dl2:"LiteMask 开源项目（加速）",
+  dl2d:"无需 VPN · 稳定",
+  dl3:"GitHub 下载幻灵终端（加速）",
+  dl3d:"主站 · 无需 VPN",
+  dl4:"联系我",
+  dl4d:"反馈问题 / 合作",
+  dl5:"直连 VPN 下载",
+  dl5d:"点击下载 · 无需 VPN",
+  dl6:"幻灵直连",
+  dl6d:"国内直连 · 迅雷云盘",
+  slogan:"科技不再是高高在上，而是服务于人民",
+  floatProfile:"个人主页（无加速）",
+  floatRepo:"开源项目（无加速）",
+  floatDownload:"下载 Release（无加速）",
+  noticeTitle:"公告",
+  noticeBody1:"已增加加速下载入口，无 VPN 用户可使用加速入口。",
+  noticeBody2:"有 VPN 的用户也可使用无加速入口，速度更快、更稳定。",
+  noticeBody3:"推荐优先使用加速入口，体验更顺畅。",
+  noticeBody4:"当前为幻灵终端下载副站，主站为https://github.com/nanci-dev/LiteMask/releases/tag/V1.0，考虑到用户没有 VPN，所以开发了副站。",
+  noticeOk:"我知道了",
+  hideFloat:"隐藏悬浮窗",
+  showFloat:"显示悬浮窗"
+},
+en:{
+  tag:"// LiteMask Download Mirror",
+  appName:"LiteMask",
+  role:"Developer",
+  tags:"Modding / Open Source / LiteMask",
+  sectionProfile:"// PROFILE",
+  profileName:"Nanci's Homepage",
+  profileDesc:"Developer homepage · Contact",
+  sectionDownload:"// DOWNLOAD",
+  dl2:"LiteMask Open Source (Proxy)",
+  dl2d:"No VPN needed · Stable",
+  dl3:"GitHub Download LiteMask (Proxy)",
+  dl3d:"Main site · No VPN needed",
+  dl4:"Contact Me",
+  dl4d:"Feedback / Collaboration",
+  dl5:"Direct VPN Download",
+  dl5d:"Click to download · No VPN needed",
+  dl6:"LiteMask Direct",
+  dl6d:"Direct in China · Xunlei Drive",
+  slogan:"Technology is no longer above the people, but serves the people",
+  floatProfile:"Profile (No Proxy)",
+  floatRepo:"Repo (No Proxy)",
+  floatDownload:"Release (No Proxy)",
+  noticeTitle:"Notice",
+  noticeBody1:"A proxy download entry has been added. Users without VPN can use the proxy entry.",
+  noticeBody2:"Users with VPN can also use the non-proxy entry for faster and more stable speeds.",
+  noticeBody3:"It is recommended to use the proxy entry first for a smoother experience.",
+  noticeBody4:"This is the LiteMask download mirror. It was built for users without VPN.",
+  noticeOk:"Got it",
+  hideFloat:"Hide floating buttons",
+  showFloat:"Show floating buttons"
+},
+ja:{tag:"// 幻霊端末ダウンロードミラー",appName:"幻霊端末",role:"開発者",tags:"改造 / オープンソース / 幻霊端末",sectionProfile:"// プロフィール",profileName:"ナンシーのホームページ",profileDesc:"開発者ホーム · 連絡先",sectionDownload:"// ダウンロード",dl2:"LiteMask オープンソース（プロキシ）",dl2d:"VPN不要 · 安定",dl3:"GitHub ダウンロード（プロキシ）",dl3d:"メインサイト · VPN不要",dl4:"お問い合わせ",dl4d:"フィードバック / コラボ",dl5:"直結VPNダウンロード",dl5d:"クリックしてダウンロード · VPN不要",dl6:"幻霊直結",dl6d:"中国国内直結 · 迅雷ドライブ",slogan:"テクノロジーはもはや高尚ではなく、人民に奉仕する",floatProfile:"プロフィール（プロキシなし）",floatRepo:"リポジトリ（プロキシなし）",floatDownload:"リリース（プロキシなし）",noticeTitle:"お知らせ",noticeBody1:"プロキシ入口を追加しました。VPNなしでも利用可能です。",noticeBody2:"VPNユーザーは非プロキシ入口も利用可能です。",noticeBody3:"プロキシ入口の使用を推奨します。",noticeBody4:"これは幻霊端末のダウンロードミラーです。VPNなしのユーザーのために開発されました。",noticeOk:"わかりました",hideFloat:"フローティングボタンを隠す",showFloat:"フローティングボタンを表示"},
+ko:{tag:"// 환령 터미널 다운로드 미러",appName:"환령 터미널",role:"개발자",tags:"모딩 / 오픈소스 / 환령 터미널",sectionProfile:"// 프로필",profileName:"난시의 홈페이지",profileDesc:"개발자 홈 · 연락처",sectionDownload:"// 다운로드",dl2:"LiteMask 오픈소스 (프록시)",dl2d:"VPN 불필요 · 안정적",dl3:"GitHub 다운로드 (프록시)",dl3d:"메인 사이트 · VPN 불필요",dl4:"연락하기",dl4d:"피드백 / 협업",dl5:"직결 VPN 다운로드",dl5d:"클릭하여 다운로드 · VPN 불필요",dl6:"환령 직결",dl6d:"중국 내 직결 ·迅雷 드라이브",slogan:"기술은 더 이상 고상하지 않고 인민을 위해 봉사한다",floatProfile:"프로필 (프록시 없음)",floatRepo:"저장소 (프록시 없음)",floatDownload:"릴리스 (프록시 없음)",noticeTitle:"공지",noticeBody1:"프록시 입구가 추가되었습니다. VPN 없이 사용 가능합니다.",noticeBody2:"VPN 사용자는 비프록시 입구도 사용할 수 있습니다.",noticeBody3:"프록시 입구를 우선 사용하세요.",noticeBody4:"이것은 환령 터미널 다운로드 미러입니다. VPN 없는 사용자를 위해 개발되었습니다.",noticeOk:"확인",hideFloat:"플로팅 버튼 숨기기",showFloat:"플로팅 버튼 표시"},
+fr:{tag:"// Miroir de téléchargement LiteMask",appName:"LiteMask",role:"Développeur",tags:"Modding / Open Source / LiteMask",sectionProfile:"// PROFIL",profileName:"Page d'accueil de Nanci",profileDesc:"Accueil développeur · Contact",sectionDownload:"// TÉLÉCHARGEMENT",dl2:"LiteMask Open Source (Proxy)",dl2d:"Sans VPN · Stable",dl3:"Téléchargement GitHub (Proxy)",dl3d:"Site principal · Sans VPN",dl4:"Contactez-moi",dl4d:"Retour / Collaboration",dl5:"Télécharger VPN direct",dl5d:"Cliquer pour télécharger · Sans VPN",dl6:"LiteMask Direct",dl6d:"Accès direct en Chine · Xunlei",slogan:"La technologie n'est plus au-dessus du peuple, mais le sert",floatProfile:"Profil (Sans Proxy)",floatRepo:"Dépôt (Sans Proxy)",floatDownload:"Version (Sans Proxy)",noticeTitle:"Avis",noticeBody1:"Une entrée proxy a été ajoutée. Utilisable sans VPN.",noticeBody2:"Les utilisateurs VPN peuvent aussi utiliser l'entrée non-proxy.",noticeBody3:"Utilisez d'abord l'entrée proxy.",noticeBody4:"Ceci est le miroir de téléchargement LiteMask. Conçu pour les utilisateurs sans VPN.",noticeOk:"Compris",hideFloat:"Masquer les boutons flottants",showFloat:"Afficher les boutons flottants"},
+de:{tag:"// LiteMask Download-Spiegel",appName:"LiteMask",role:"Entwickler",tags:"Modding / Open Source / LiteMask",sectionProfile:"// PROFIL",profileName:"Nancis Homepage",profileDesc:"Entwickler-Homepage · Kontakt",sectionDownload:"// DOWNLOAD",dl2:"LiteMask Open Source (Proxy)",dl2d:"Kein VPN · Stabil",dl3:"GitHub Download (Proxy)",dl3d:"Hauptseite · Kein VPN",dl4:"Kontakt",dl4d:"Feedback / Zusammenarbeit",dl5:"Direkter VPN-Download",dl5d:"Klicken zum Herunterladen · Kein VPN",dl6:"LiteMask Direct",dl6d:"Direkt in China · Xunlei",slogan:"Technologie steht nicht mehr über dem Volk, sondern dient ihm",floatProfile:"Profil (Kein Proxy)",floatRepo:"Repo (Kein Proxy)",floatDownload:"Release (Kein Proxy)",noticeTitle:"Hinweis",noticeBody1:"Proxy-Eingang hinzugefügt. Ohne VPN nutzbar.",noticeBody2:"VPN-Nutzer können auch den Nicht-Proxy-Eingang nutzen.",noticeBody3:"Bitte zuerst den Proxy-Eingang nutzen.",noticeBody4:"Dies ist der LiteMask Download-Spiegel. Für Nutzer ohne VPN entwickelt.",noticeOk:"Verstanden",hideFloat:"Schwebende Buttons ausblenden",showFloat:"Schwebende Buttons anzeigen"},
+es:{tag:"// Espejo de descarga LiteMask",appName:"LiteMask",role:"Desarrollador",tags:"Modding / Código abierto / LiteMask",sectionProfile:"// PERFIL",profileName:"Página de Nanci",profileDesc:"Inicio del desarrollador · Contacto",sectionDownload:"// DESCARGA",dl2:"LiteMask Código Abierto (Proxy)",dl2d:"Sin VPN · Estable",dl3:"Descarga GitHub (Proxy)",dl3d:"Sitio principal · Sin VPN",dl4:"Contáctame",dl4d:"Comentarios / Colaboración",dl5:"Descarga VPN directa",dl5d:"Clic para descargar · Sin VPN",dl6:"LiteMask Directo",dl6d:"Directo en China · Xunlei",slogan:"La tecnología ya no está por encima del pueblo, sino que le sirve",floatProfile:"Perfil (Sin Proxy)",floatRepo:"Repo (Sin Proxy)",floatDownload:"Versión (Sin Proxy)",noticeTitle:"Aviso",noticeBody1:"Se ha añadido una entrada proxy. Sin VPN.",noticeBody2:"Los usuarios con VPN también pueden usar la entrada sin proxy.",noticeBody3:"Se recomienda usar primero la entrada proxy.",noticeBody4:"Este es el espejo de descarga de LiteMask. Creado para usuarios sin VPN.",noticeOk:"Entendido",hideFloat:"Ocultar botones flotantes",showFloat:"Mostrar botones flotantes"},
+ru:{tag:"// Зеркало загрузки LiteMask",appName:"LiteMask",role:"Разработчик",tags:"Моддинг / Открытый код / LiteMask",sectionProfile:"// ПРОФИЛЬ",profileName:"Домашняя страница Nanci",profileDesc:"Дом разработчика · Контакты",sectionDownload:"// СКАЧАТЬ",dl2:"LiteMask Открытый код (Прокси)",dl2d:"Без VPN · Стабильно",dl3:"Скачать GitHub (Прокси)",dl3d:"Основной сайт · Без VPN",dl4:"Связаться",dl4d:"Обратная связь",dl5:"Прямая загрузка VPN",dl5d:"Нажмите для загрузки · Без VPN",dl6:"LiteMask Direct",dl6d:"Прямо в Китае · Xunlei",slogan:"Технологии больше не выше народа, а служат ему",floatProfile:"Профиль (Без прокси)",floatRepo:"Репозиторий (Без прокси)",floatDownload:"Релиз (Без прокси)",noticeTitle:"Уведомление",noticeBody1:"Добавлен прокси-вход. Без VPN.",noticeBody2:"Пользователи VPN также могут использовать обычный вход.",noticeBody3:"Рекомендуется использовать прокси-вход.",noticeBody4:"Это зеркало загрузки LiteMask. Создано для пользователей без VPN.",noticeOk:"Понятно",hideFloat:"Скрыть плавающие кнопки",showFloat:"Показать плавающие кнопки"}
 };
 
+var currentLang = localStorage.getItem('litemask-lang') || 'zh';
+
 function setLang(lang){
-  var dict = i18n[lang] || i18n.en;
+  currentLang = lang;
+  var dict=i18n[lang]||i18n.zh;
   document.querySelectorAll('[data-i18n]').forEach(function(el){
-    var key = el.getAttribute('data-i18n');
-    if(dict[key]) el.textContent = dict[key];
+    var key=el.getAttribute('data-i18n');
+    if(dict[key])el.textContent=dict[key];
   });
-  document.querySelectorAll('.lang-switch button').forEach(function(b){
-    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+  document.querySelectorAll('.setting-panel .item').forEach(function(it){
+    var l=it.getAttribute('data-lang');
+    if(l) it.classList.toggle('active', l === lang);
   });
-  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  document.documentElement.lang = (lang === 'zh') ? 'zh-CN' : lang;
   localStorage.setItem('litemask-lang', lang);
+  updateFloatText();
+  showNoticeIfNeeded();
 }
 
-document.querySelectorAll('.lang-switch button').forEach(function(b){
-  b.addEventListener('click', function(){
-    setLang(this.getAttribute('data-lang'));
-  });
-});
+function toggleSetting(){
+  var p=document.getElementById('settingPanel');
+  var b=document.getElementById('settingBtn');
+  p.classList.toggle('show');
+  b.classList.toggle('spin');
+}
 
-var saved = localStorage.getItem('litemask-lang') || 'en';
-setLang(saved);
+function toggleFloat(){
+  var nav=document.getElementById('floatNav');
+  nav.classList.toggle('hidden');
+  updateFloatText();
+}
 
-var reveals = document.querySelectorAll('.reveal');
-var io = new IntersectionObserver(function(entries){
+function updateFloatText(){
+  var nav=document.getElementById('floatNav');
+  var t=document.getElementById('floatToggleText');
+  var d=i18n[currentLang]||i18n.zh;
+  t.textContent = nav.classList.contains('hidden') ? d.showFloat : d.hideFloat;
+}
+
+function showNoticeIfNeeded(){
+  var shown = localStorage.getItem('litemask-notice-' + currentLang);
+  if(!shown){
+    setTimeout(function(){
+      document.getElementById('notice').classList.add('show');
+      localStorage.setItem('litemask-notice-' + currentLang, '1');
+    }, 600);
+  }
+}
+function closeNotice(){
+  document.getElementById('notice').classList.remove('show');
+}
+
+setLang(currentLang);
+
+var reveals=document.querySelectorAll('.reveal');
+var io=new IntersectionObserver(function(entries){
   entries.forEach(function(e){
-    if(e.isIntersecting){
-      e.target.classList.add('in');
-      io.unobserve(e.target);
-    }
+    if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
   });
-}, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
-reveals.forEach(function(el){ io.observe(el); });
+},{threshold:0.12,rootMargin:'0px 0px -6% 0px'});
+reveals.forEach(function(el){io.observe(el)});
 </script>
 </body>
 </html>
