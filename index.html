@@ -130,7 +130,16 @@ h1 span{background:linear-gradient(135deg,#a855f7,#3b82f6,#ec4899);-webkit-backg
 .modal .btn-primary{background:linear-gradient(135deg,#a855f7,#3b82f6);color:#fff;box-shadow:0 8px 24px rgba(168,85,247,0.3)}
 .modal .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(168,85,247,0.4)}
 .modal .btn-primary:active{transform:scale(0.97)}
-
+.modal-avatar{
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  object-fit:cover;
+  margin:0 auto 16px;
+  display:block;
+  border:3px solid #fff;
+  box-shadow:0 6px 20px rgba(168,85,247,0.25);
+}
 @media(max-width:720px){
   .float-nav{right:12px;gap:8px}
   .float-btn{padding:10px 14px;font-size:11px}
@@ -234,7 +243,8 @@ h1 span{background:linear-gradient(135deg,#a855f7,#3b82f6,#ec4899);-webkit-backg
 
 <div class="modal-mask" id="notice">
   <div class="modal">
-    <h3>📢 <span data-i18n="noticeTitle">公告</span></h3>
+ <img class="modal-avatar" src="https://gh-proxy.com/https://github.com/nanci-dev.png" alt="avatar">
+<h3>📢 <span data-i18n="noticeTitle">公告</span></h3>
     <p data-i18n="noticeBody1">已增加加速下载入口，无 VPN 用户可使用加速入口。</p>
     <p data-i18n="noticeBody2">有 VPN 的用户也可使用无加速入口，速度更快、更稳定。</p>
     <p data-i18n="noticeBody3">推荐优先使用加速入口，体验更顺畅。</p>
@@ -359,13 +369,9 @@ function updateFloatText(){
 }
 
 function showNoticeIfNeeded(){
-  var shown = localStorage.getItem('litemask-notice-' + currentLang);
-  if(!shown){
-    setTimeout(function(){
-      document.getElementById('notice').classList.add('show');
-      localStorage.setItem('litemask-notice-' + currentLang, '1');
-    }, 600);
-  }
+  setTimeout(function(){
+    document.getElementById('notice').classList.add('show');
+  }, 600);
 }
 function closeNotice(){
   document.getElementById('notice').classList.remove('show');
