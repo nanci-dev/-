@@ -1,422 +1,369 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LiteMask</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{scroll-behavior:smooth}
-body{
-  background:#f2f2f7;
-  color:#1c1c1e;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei",sans-serif;
-  overflow-x:hidden;position:relative;min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>幻灵终端 (LiteMask) - 官方主页</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --text: #c9d1d9;
+            --text-title: #f0f6fc;
+            --border: #30363d;
+            --link: #58a6ff;
+            --code-bg: #161b22;
+            --notice-border: #f0883e;
+            --notice-bg: #21262d;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 24px 16px;
+            max-width: 880px;
+            margin: 0 auto;
+            font-size: 16px;
+        }
+        /* 排版核心：居中风格 */
+        .center-block {
+            text-align: center;
+        }
+        h1 {
+            font-size: 32px;
+            color: var(--text-title);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .sub-title {
+            font-size: 18px;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        .sub-en {
+            font-size: 14px;
+            color: #8b949e;
+            margin-bottom: 16px;
+        }
+        .desc {
+            font-size: 15px;
+            color: var(--text);
+            margin-bottom: 24px;
+            text-align: left;
+        }
+        /* 区块标题 */
+        .block-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-title);
+            margin: 24px 0 12px;
+            text-align: center;
+        }
+        /* 徽章和图标容器 */
+        .badges-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .badges-row a {
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+        .badges-row a:active {
+            transform: scale(0.92);
+        }
+        .badges-row img {
+            height: 20px;
+            border-radius: 4px;
+            display: block;
+        }
+        /* 技术栈大图标 */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .tech-stack a {
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+        .tech-stack a:active {
+            transform: scale(0.92);
+        }
+        .tech-stack img {
+            height: 28px;
+            border-radius: 4px;
+            display: block;
+        }
+        /* 快速跳转按钮 */
+        .quick-jump {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+        .quick-jump a {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+        .quick-jump a:active {
+            opacity: 0.8;
+        }
+        /* 按钮颜色 */
+        .btn-blue { background-color: #1f6feb; }
+        .btn-green { background-color: #238636; }
+        .btn-orange { background-color: #d29922; }
+        .btn-purple { background-color: #8957e5; }
+        .btn-red { background-color: #da3633; }
 
-.setting-btn{
-  position:fixed;top:24px;right:24px;z-index:30;width:44px;height:44px;border-radius:50%;
-  background:rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.05);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  box-shadow:0 4px 16px rgba(0,0,0,0.06);
-  transition:transform 0.4s cubic-bezier(0.22,1,0.36,1),box-shadow 0.3s,color 0.3s;
-  font-size:18px;color:#8e8e93;user-select:none;
-}
-.setting-btn:hover{box-shadow:0 8px 24px rgba(0,122,255,0.15);color:#007aff}
-.setting-btn.spin{transform:rotate(90deg)}
-
-.setting-panel{
-  position:fixed;top:80px;right:24px;z-index:29;width:190px;max-height:0;overflow:hidden;
-  background:rgba(255,255,255,0.95);border:1px solid rgba(0,0,0,0.05);
-  border-radius:18px;backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
-  box-shadow:0 16px 48px rgba(0,0,0,0.12);
-  transition:max-height 0.45s cubic-bezier(0.22,1,0.36,1),padding 0.3s ease;padding:0;
-}
-.setting-panel.show{max-height:520px;padding:8px;overflow-y:auto}
-.setting-panel .item{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:10px 14px;border-radius:12px;font-size:13px;color:#3a3a3c;cursor:pointer;
-  transition:background 0.2s,color 0.2s;
-}
-.setting-panel .item:hover{background:#f2f2f7;color:#007aff}
-.setting-panel .item.active{color:#007aff;font-weight:600;background:#e8f0fe}
-.setting-panel .item.active::after{content:"✓"}
-.setting-panel .divider{height:1px;background:rgba(0,0,0,0.06);margin:6px 4px}
-
-.float-nav{
-  position:fixed;right:20px;top:50%;transform:translateY(-50%);
-  z-index:20;display:flex;flex-direction:column;gap:10px;
-  transition:opacity 0.4s ease,transform 0.4s ease,visibility 0.4s;
-}
-.float-nav.hidden{opacity:0;visibility:hidden;transform:translateY(-50%) translateX(80px)}
-.float-btn{
-  padding:12px 18px;background:rgba(255,255,255,0.9);
-  border:1px solid rgba(0,0,0,0.05);border-radius:14px;
-  text-decoration:none;color:#3a3a3c;font-size:12px;font-weight:600;
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  box-shadow:0 4px 16px rgba(0,0,0,0.06);
-  transition:transform 0.35s cubic-bezier(0.22,1,0.36,1),box-shadow 0.3s,color 0.3s,border-color 0.3s;
-  white-space:nowrap;
-}
-.float-btn:hover{transform:translateX(-6px);color:#007aff;border-color:#a8c7fa;box-shadow:0 8px 24px rgba(0,122,255,0.15)}
-
-.wrap{position:relative;z-index:2;width:100%;max-width:1280px;margin:0 auto;padding:120px 40px 200px}
-.tag{
-  display:inline-block;font-size:11px;letter-spacing:4px;color:#007aff;
-  border:1px solid rgba(0,122,255,0.3);padding:6px 14px;margin-bottom:32px;
-  border-radius:999px;background:rgba(255,255,255,0.8);
-  font-weight:600;
-}
-h1{font-size:clamp(48px,10vw,96px);font-weight:800;line-height:1.05;letter-spacing:-3px;color:#1c1c1e;margin-bottom:16px}
-h1 span{background:linear-gradient(135deg,#007aff,#34c759,#ff9500);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
-.sub{font-size:16px;color:#8e8e93;margin-bottom:48px;letter-spacing:0.5px}
-.sub b{color:#1c1c1e;font-weight:700}
-
-.search-wrap{max-width:520px;margin-bottom:56px;position:relative}
-.search-wrap input{
-  width:100%;padding:14px 20px 14px 48px;border-radius:16px;
-  border:1px solid rgba(0,0,0,0.06);
-  background:rgba(255,255,255,0.9);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  font-family:inherit;font-size:15px;color:#1c1c1e;outline:none;
-  box-shadow:0 4px 16px rgba(0,0,0,0.04);
-  transition:box-shadow 0.3s,border-color 0.3s;
-}
-.search-wrap input:focus{border-color:#a8c7fa;box-shadow:0 8px 24px rgba(0,122,255,0.12)}
-.search-wrap .icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:#8e8e93;font-size:16px;pointer-events:none}
-
-.section-title{font-size:12px;font-weight:700;letter-spacing:4px;color:#8e8e93;text-transform:uppercase;margin:56px 0 20px}
-.links{display:grid;grid-template-columns:1fr;gap:16px}
-@media(min-width:560px){.links{grid-template-columns:1fr 1fr}}
-@media(min-width:900px){.links{grid-template-columns:1fr 1fr 1fr}}
-
-.link{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:22px 26px;background:rgba(255,255,255,0.9);
-  border:1px solid rgba(0,0,0,0.05);border-radius:20px;
-  text-decoration:none;color:#1c1c1e;
-  transition:transform 0.35s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s,background 0.35s,border-color 0.35s;
-  position:relative;overflow:hidden;
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  box-shadow:0 4px 16px rgba(0,0,0,0.04);
-  min-height:80px;outline:none;
-}
-.link:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.08);border-color:#a8c7fa}
-.link .name{font-size:15px;font-weight:700;color:#1c1c1e}
-.link .desc{font-size:11px;color:#8e8e93;margin-top:4px}
-.link .arrow{color:#007aff;font-size:18px;font-weight:700;transition:transform 0.35s cubic-bezier(0.22,1,0.36,1)}
-.link:hover .arrow{transform:translateX(6px)}
-.link:active{transform:scale(0.97)}
-
-.link.profile{
-  grid-column:1/-1;
-  background:linear-gradient(135deg,rgba(0,122,255,0.1),rgba(52,199,89,0.08));
-  border-color:rgba(0,122,255,0.3);
-  min-height:100px;
-}
-.link.profile .name{font-size:20px;color:#007aff}
-
-.footer{margin-top:96px;padding-top:36px;border-top:1px solid rgba(0,0,0,0.06);font-size:12px;color:#8e8e93;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.footer .dot{color:#007aff}
-
-.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.8s cubic-bezier(0.22,1,0.36,1),transform 0.8s cubic-bezier(0.22,1,0.36,1);will-change:opacity,transform}
-.reveal.in{opacity:1;transform:translateY(0)}
-
-.back-top{
-  position:fixed;bottom:32px;right:24px;z-index:15;
-  width:48px;height:48px;border-radius:50%;border:none;
-  background:rgba(255,255,255,0.95);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  color:#007aff;font-size:20px;cursor:pointer;
-  box-shadow:0 8px 24px rgba(0,0,0,0.1);
-  opacity:0;visibility:hidden;transform:translateY(20px);
-  transition:opacity 0.35s,visibility 0.35s,transform 0.35s,box-shadow 0.3s;
-  outline:none;
-}
-.back-top.show{opacity:1;visibility:visible;transform:translateY(0)}
-.back-top:hover{box-shadow:0 12px 32px rgba(0,122,255,0.2)}
-
-.modal-mask{position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:opacity 0.35s ease,visibility 0.35s ease}
-.modal-mask.show{opacity:1;visibility:visible}
-.modal{width:100%;max-width:720px;background:rgba(255,255,255,0.98);border:1px solid rgba(0,0,0,0.05);border-radius:24px;padding:40px;box-shadow:0 24px 80px rgba(0,0,0,0.2);transform:translateY(20px) scale(0.96);transition:transform 0.4s cubic-bezier(0.22,1,0.36,1)}
-.modal-mask.show .modal{transform:translateY(0) scale(1)}
-.modal h3{margin:0 0 20px;font-size:24px;font-weight:800;color:#1c1c1e}
-.modal h3 span{background:linear-gradient(135deg,#007aff,#34c759);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.modal p{margin:0 0 16px;font-size:16px;line-height:2.0;color:#3a3a3c}
-.modal .actions{margin-top:28px;display:flex;gap:12px}
-.modal .btn{flex:1;padding:16px;border:none;border-radius:14px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:transform 0.3s cubic-bezier(0.22,1,0.36,1);outline:none}
-.modal .btn-primary{background:#007aff;color:#fff}
-.modal .btn-primary:hover{transform:translateY(-2px);background:#0066d6}
-.modal .btn-primary:active{transform:scale(0.97)}
-
-@media(max-width:720px){
-  .float-nav{right:12px;gap:8px}
-  .float-btn{padding:10px 14px;font-size:11px}
-  .wrap{padding:100px 24px 160px}
-  .setting-panel{width:160px;right:16px}
-  .modal{padding:28px;max-width:100%}
-  .modal h3{font-size:20px}
-  .modal p{font-size:14px}
-  .back-top{right:16px;bottom:24px}
-}
-</style>
+        /* 正文区块 */
+        .section {
+            margin-bottom: 24px;
+        }
+        .section h2 {
+            font-size: 20px;
+            color: var(--text-title);
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .section p, .section li {
+            font-size: 15px;
+            color: var(--text);
+        }
+        .section ul {
+            padding-left: 24px;
+        }
+        .section li {
+            margin-bottom: 6px;
+        }
+        /* 警告声明框 */
+        .notice-box {
+            background-color: var(--notice-bg);
+            border-left: 4px solid var(--notice-border);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+        .notice-box h3 {
+            font-size: 18px;
+            color: var(--text-title);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .notice-box h3::before {
+            content: "⚠️";
+            margin-right: 8px;
+            font-size: 20px;
+        }
+        .notice-box ul {
+            padding-left: 20px;
+            font-size: 14px;
+        }
+        .notice-box li {
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        /* 代码块和表格 */
+        pre {
+            background-color: var(--code-bg);
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.45;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+        code {
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+            background-color: rgba(110,118,129,0.4);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 85%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+        th {
+            background-color: var(--code-bg);
+            color: var(--text-title);
+            font-weight: 600;
+        }
+        a {
+            color: var(--link);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            font-size: 13px;
+            color: #8b949e;
+            margin-top: 40px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+    </style>
 </head>
 <body>
 
-<div class="setting-btn" id="settingBtn" onclick="toggleSetting()">⚙</div>
+    <!-- 顶部区域 -->
+    <div class="center-block">
+        <h1>幻灵终端 (LiteMask)</h1>
+        <div class="sub-title">轻量级 Android 代码运行与文件管理工具</div>
+        <div class="sub-en">An open-source & forever-free Android code runner toolkit — no root required.</div>
+        <div class="desc">
+            混合架构单包 APK：原生 Java + Android SDK，<strong>源码级内置液态玻璃 UI 与本地 Java 代码执行环境</strong>，不依赖任何外部 App，即可完成代码编辑与本地运行。
+        </div>
+        
+        <!-- 项目状态 -->
+        <div class="block-title">项目状态 · 许可</div>
+        <div class="badges-row">
+            <a href="https://github.com/nanci-dev/LiteMask/issues" target="_blank"><img src="https://img.shields.io/badge/状态-开发中-brightgreen.svg" alt="状态"></a>
+            <a href="https://github.com/nanci-dev/LiteMask/blob/main/LICENSE" target="_blank"><img src="https://img.shields.io/badge/许可-MIT-blue.svg" alt="许可"></a>
+            <a href="https://github.com/nanci-dev/LiteMask/stargazers" target="_blank"><img src="https://img.shields.io/badge/stars-0-brightgreen.svg" alt="stars"></a>
+            <a href="https://github.com/nanci-dev/LiteMask/network/members" target="_blank"><img src="https://img.shields.io/badge/forks-0-blue.svg" alt="forks"></a>
+            <a href="https://github.com/nanci-dev/LiteMask/issues" target="_blank"><img src="https://img.shields.io/badge/issues-0%20open-orange.svg" alt="issues"></a>
+            <a href="https://github.com/nanci-dev/LiteMask/pulls" target="_blank"><img src="https://img.shields.io/badge/PRs-welcome-blueviolet.svg" alt="PRs"></a>
+        </div>
 
-<div class="setting-panel" id="settingPanel">
-  <div class="item" data-lang="zh" onclick="setLang('zh')">中文</div>
-  <div class="item" data-lang="en" onclick="setLang('en')">English</div>
-  <div class="divider"></div>
-  <div class="item" onclick="toggleFloat()">🔘 <span id="floatToggleText">隐藏悬浮窗</span></div>
-</div>
+        <!-- 构建环境 -->
+        <div class="block-title">构建环境</div>
+        <div class="badges-row">
+            <a href="https://www.java.com" target="_blank"><img src="https://img.shields.io/badge/Java-100%25-orange.svg" alt="Java"></a>
+            <a href="https://developer.android.com" target="_blank"><img src="https://img.shields.io/badge/minSdk-26%20(Android%208.0)-green.svg" alt="minSdk"></a>
+            <a href="https://www.android.com" target="_blank"><img src="https://img.shields.io/badge/Platform-Android-brightgreen.svg" alt="Platform"></a>
+            <a href="https://github.com/nanci-dev/LiteMask" target="_blank"><img src="https://img.shields.io/badge/AIDE-Pro-red.svg" alt="AIDE Pro"></a>
+        </div>
 
-<div class="float-nav" id="floatNav">
-  <a class="float-btn" href="https://github.com/nanci-dev" target="_blank" data-i18n="floatProfile">个人主页（无加速）</a>
-  <a class="float-btn" href="https://github.com/nanci-dev/LiteMask" target="_blank" data-i18n="floatRepo">开源项目（无加速）</a>
-  <a class="float-btn" href="https://github.com/nanci-dev/LiteMask/releases" target="_blank" data-i18n="floatDownload">下载 Release（无加速）</a>
-</div>
+        <!-- 技术栈 -->
+        <div class="block-title">技术栈</div>
+        <div class="tech-stack">
+            <a href="https://www.java.com" target="_blank"><img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java"></a>
+            <a href="https://developer.android.com" target="_blank"><img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android"></a>
+            <a href="https://github.com/nanci-dev/LiteMask" target="_blank"><img src="https://img.shields.io/badge/AIDE_Pro-FF5722?style=for-the-badge&logo=androidstudio&logoColor=white" alt="AIDE Pro"></a>
+            <a href="https://github.com/nanci-dev/LiteMask" target="_blank"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
+        </div>
 
-<div class="wrap">
-  <div class="tag reveal" data-i18n="tag">// 幻灵终端下载副站</div>
-  <h1 class="reveal">NANCI<br><span data-i18n="appName">幻灵终端</span></h1>
-  <p class="sub reveal">
-    <span data-i18n="role">开发者</span> · <b>南辞</b> · 
-    <span data-i18n="tags">玩机 / 开源 / 幻灵终端</span>
-  </p>
-
-  <div class="search-wrap reveal">
-    <span class="icon">🔍</span>
-    <input type="text" id="searchInput" placeholder="搜索功能..." oninput="filterLinks(this.value)">
-  </div>
-
-  <div class="section-title reveal" data-i18n="sectionProfile">// 个人主页</div>
-  <div class="links">
-    <a class="link profile reveal" href="https://v.kuaishou.com/KwTy7y95" target="_blank">
-      <div>
-        <div class="name" data-i18n="profileName">南辞的快手个人主页</div>
-        <div class="desc" data-i18n="profileDesc">开发者主页 · 联系方式</div>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-  </div>
-
-  <div class="section-title reveal" data-i18n="sectionDownload">// 下载</div>
-  <div class="links">
-    <a class="link reveal" data-name="GitHub 下载幻灵终端（加速）" href="https://gh-proxy.com/https://github.com/nanci-dev/LiteMask/releases" target="_blank">
-      <div>
-        <div class="name" data-i18n="dl3">GitHub 下载幻灵终端（加速）</div>
-        <div class="desc" data-i18n="dl3d">主站 · 无需 VPN</div>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-    <a class="link reveal" data-name="LiteMask 开源项目（加速）" href="https://gh-proxy.com/https://github.com/nanci-dev/LiteMask" target="_blank">
-      <div>
-        <div class="name" data-i18n="dl2">LiteMask 开源项目（加速）</div>
-        <div class="desc" data-i18n="dl2d">无需 VPN · 稳定</div>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-    <a class="link reveal" data-name="联系我" href="mailto:3932194646@qq.com">
-      <div>
-        <div class="name" data-i18n="dl4">联系我</div>
-        <div class="desc" data-i18n="dl4d">反馈问题 / 合作</div>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-    <a class="link reveal" data-name="直连 VPN 下载" href="https://dl-e.feejii.com/storage/files/2026/09/29/9/5759769/1790693409837969.gz?t=6ac7aa20&rlimit=20&us=AS8RyNm22m&sign=6d7f479323924a4e96080ab01ecb7b98&download_name=%E9%BB%91%E9%A9%AC%E5%8A%A0%E9%80%9F%E5%99%A8_7.8.7.9.apk&p=null-15553876-62898128589" target="_blank">
-      <div>
-        <div class="name" data-i18n="dl5">直连 VPN 下载</div>
-        <div class="desc" data-i18n="dl5d">点击下载 · 无需 VPN</div>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-    <a class="link reveal" data-name="幻灵直连" href="https://pan.xunlei.com/s/VP3zPA0qD1FoizPfcoF0e9cXA1?pwd=zffd#" target="_blank">
-      <div>
-        <div class="name" data-i18n="dl6">幻灵直连</div>
-        <div class="desc" data-i18n="dl6d">国内直连 · 迅雷云盘</div>
-      </div>
-      <span class="arrow">→</span>
-    </a>
-  </div>
-
-  <div class="footer reveal">
-    <span><span class="dot">●</span> <span data-i18n="slogan">科技不再是高高在上，而是服务于人民</span></span>
-    <span>© 2026 NANCI</span>
-  </div>
-</div>
-
-<button class="back-top" id="backTop" onclick="scrollToTop()">↑</button>
-
-<div class="modal-mask" id="notice">
-  <div class="modal">
-    <h3>📢 <span data-i18n="noticeTitle">公告</span></h3>
-    <p data-i18n="noticeBody1">已增加加速下载入口，无 VPN 用户可使用加速入口。</p>
-    <p data-i18n="noticeBody2">有 VPN 的用户也可使用无加速入口，速度更快、更稳定。</p>
-    <p data-i18n="noticeBody3">推荐优先使用加速入口，体验更顺畅。</p>
-    <p data-i18n="noticeBody4">当前为幻灵终端下载副站，考虑到用户没有 VPN，所以开发了副站。目前只提供源码，不提供 APK，后续版本可能会提供，请大家遵守开源协议。</p>
-    <p data-i18n="noticeBody5">南辞的 QQ：3136806069，欢迎大家提供意见。也可以关注南辞的快手主页，获取最新动态。</p>
-    <div class="actions">
-      <button class="btn btn-primary" onclick="closeNotice()" data-i18n="noticeOk">我知道了</button>
+        <!-- 快速跳转 -->
+        <div class="block-title">快速跳转</div>
+        <div class="quick-jump">
+            <a href="#intro" class="btn-blue">项目简介</a>
+            <a href="#status" class="btn-green">开发状态</a>
+            <a href="#env" class="btn-orange">构建环境</a>
+            <a href="#notice" class="btn-red">重要声明</a>
+            <a href="#links" class="btn-purple">相关链接</a>
+        </div>
     </div>
-  </div>
-</div>
 
-<script>
-var i18n={
-zh:{
-  tag:"// 幻灵终端下载副站",
-  appName:"幻灵终端",
-  role:"开发者",
-  tags:"玩机 / 开源 / 幻灵终端",
-  sectionProfile:"// 个人主页",
-  profileName:"南辞的快手个人主页",
-  profileDesc:"开发者主页 · 联系方式",
-  sectionDownload:"// 下载",
-  dl2:"LiteMask 开源项目（加速）",
-  dl2d:"无需 VPN · 稳定",
-  dl3:"GitHub 下载幻灵终端（加速）",
-  dl3d:"主站 · 无需 VPN",
-  dl4:"联系我",
-  dl4d:"反馈问题 / 合作",
-  dl5:"直连 VPN 下载",
-  dl5d:"点击下载 · 无需 VPN",
-  dl6:"幻灵直连",
-  dl6d:"国内直连 · 迅雷云盘",
-  slogan:"科技不再是高高在上，而是服务于人民",
-  floatProfile:"个人主页（无加速）",
-  floatRepo:"开源项目（无加速）",
-  floatDownload:"下载 Release（无加速）",
-  noticeTitle:"公告",
-  noticeBody1:"已增加加速下载入口，无 VPN 用户可使用加速入口。",
-  noticeBody2:"有 VPN 的用户也可使用无加速入口，速度更快、更稳定。",
-  noticeBody3:"推荐优先使用加速入口，体验更顺畅。",
-  noticeBody4:"当前为幻灵终端下载副站，考虑到用户没有 VPN，所以开发了副站。目前只提供源码，不提供 APK，后续版本可能会提供，请大家遵守开源协议。",
-  noticeBody5:"南辞的 QQ：3136806069，欢迎大家提供意见。也可以关注南辞的快手主页，获取最新动态。",
-  noticeOk:"我知道了",
-  hideFloat:"隐藏悬浮窗",
-  showFloat:"显示悬浮窗",
-  searchPlaceholder:"搜索功能..."
-},
-en:{
-  tag:"// LiteMask Download Mirror",
-  appName:"LiteMask",
-  role:"Developer",
-  tags:"Modding / Open Source / LiteMask",
-  sectionProfile:"// PROFILE",
-  profileName:"Nanci's Kuaishou",
-  profileDesc:"Developer homepage · Contact",
-  sectionDownload:"// DOWNLOAD",
-  dl2:"LiteMask Open Source (Proxy)",
-  dl2d:"No VPN needed · Stable",
-  dl3:"GitHub Download LiteMask (Proxy)",
-  dl3d:"Main site · No VPN needed",
-  dl4:"Contact Me",
-  dl4d:"Feedback / Collaboration",
-  dl5:"Direct VPN Download",
-  dl5d:"Click to download · No VPN needed",
-  dl6:"LiteMask Direct",
-  dl6d:"Direct in China · Xunlei Drive",
-  slogan:"Technology is no longer above the people, but serves the people",
-  floatProfile:"Profile (No Proxy)",
-  floatRepo:"Repo (No Proxy)",
-  floatDownload:"Release (No Proxy)",
-  noticeTitle:"Notice",
-  noticeBody1:"A proxy download entry has been added. Users without VPN can use the proxy entry.",
-  noticeBody2:"Users with VPN can also use the non-proxy entry for faster and more stable speeds.",
-  noticeBody3:"It is recommended to use the proxy entry first for a smoother experience.",
-  noticeBody4:"This is the LiteMask download mirror. It was built for users without VPN. Only source code is provided for now, APK may come later. Please follow the open source license.",
-  noticeBody5:"Nanci's QQ: 3136806069. Feedback welcome. You can also follow Nanci's Kuaishou for updates.",
-  noticeOk:"Got it",
-  hideFloat:"Hide floating buttons",
-  showFloat:"Show floating buttons",
-  searchPlaceholder:"Search..."
-}
-};
+    <!-- 正文区域 -->
+    <div class="section" id="intro">
+        <h2>项目简介</h2>
+        <p>“幻灵终端”是一款面向 Android 平台的轻量级代码编辑器与文件管理工具。内置 Java 代码运行环境，支持纯本地编译与输出，配备了全新的“液态玻璃”风格 UI。本项目完全开源、免费，不依赖任何外部 App。</p>
+    </div>
 
-var currentLang = localStorage.getItem('litemask-lang') || 'zh';
+    <div class="section" id="status">
+        <h2>开发状态</h2>
+        <ul>
+            <li><strong>当前版本</strong>：v1.0.0（正式版）</li>
+            <li><strong>核心功能</strong>：代码编辑器、文件管理、液态玻璃 UI 参数调节均已实现</li>
+            <li><strong>更新频率</strong>：随缘更新，欢迎在 Issues 提交反馈</li>
+        </ul>
+    </div>
 
-function setLang(lang){
-  currentLang = lang;
-  var dict=i18n[lang]||i18n.zh;
-  document.querySelectorAll('[data-i18n]').forEach(function(el){
-    var key=el.getAttribute('data-i18n');
-    if(dict[key])el.textContent=dict[key];
-  });
-  var input=document.getElementById('searchInput');
-  if(input) input.placeholder=dict.searchPlaceholder;
-  document.querySelectorAll('.setting-panel .item').forEach(function(it){
-    var l=it.getAttribute('data-lang');
-    if(l) it.classList.toggle('active', l === lang);
-  });
-  document.documentElement.lang = (lang === 'zh') ? 'zh-CN' : lang;
-  localStorage.setItem('litemask-lang', lang);
-  updateFloatText();
-}
+    <div class="section" id="env">
+        <h2>构建环境</h2>
+        <table>
+            <tr><th>项目</th><th>版本</th></tr>
+            <tr><td>开发工具</td><td>AIDE Pro（手机端）</td></tr>
+            <tr><td>开发语言</td><td>Java</td></tr>
+            <tr><td>最低 SDK</td><td>Android 8.0 (API 26)</td></tr>
+            <tr><td>主题</td><td>Theme.Material.NoActionBar</td></tr>
+            <tr><td>外部依赖</td><td>原生 SDK，无第三方依赖</td></tr>
+        </table>
+    </div>
 
-function toggleSetting(){
-  var p=document.getElementById('settingPanel');
-  var b=document.getElementById('settingBtn');
-  p.classList.toggle('show');
-  b.classList.toggle('spin');
-}
+    <div class="notice-box" id="notice">
+        <h3>重要声明：当前为 v1.0.0 正式版</h3>
+        <ul>
+            <li>本项目为个人开源项目，目前源码结构稳定，可编译出 APK 直接运行。</li>
+            <li>请在 Android 8.0 及以上系统使用，需授予存储读写权限。</li>
+            <li>源码仅供学习与交流使用，请遵循 MIT 开源协议。</li>
+            <li><strong>AIDE 编译避坑</strong>：如果遇到编译报错，请先检查 R.java 生成情况，或删除 <code>build/</code> 和 <code>gen/</code> 目录后重新编译。若 <code>BuildConfig.java</code> 卡死，同样删除构建目录重新编译。</li>
+            <li>如果遇到无法编译的情况，欢迎提交 Issue，但请附上具体的报错日志。</li>
+        </ul>
+    </div>
 
-function toggleFloat(){
-  var nav=document.getElementById('floatNav');
-  nav.classList.toggle('hidden');
-  updateFloatText();
-}
+    <div class="section">
+        <h2>项目结构</h2>
+        <pre>LiteMask/
+├── app/
+│   └── src/
+│       └── main/
+│           ├── java/com/huanling/application/  &lt;-- 核心 Java 代码
+│           │   ├── mainactivity.java
+│           │   ├── homefragment.java
+│           │   ├── filefragment.java
+│           │   ├── minefragment.java
+│           │   ├── splashactivity.java
+│           │   └── globalapplication.java
+│           ├── res/                            &lt;-- UI 资源文件
+│           │   ├── layout/
+│           │   ├── drawable/
+│           │   └── values/
+│           └── AndroidManifest.xml
+├── .gitignore
+├── LICENSE
+└── README.md</pre>
+    </div>
 
-function updateFloatText(){
-  var nav=document.getElementById('floatNav');
-  var t=document.getElementById('floatToggleText');
-  var d=i18n[currentLang]||i18n.zh;
-  t.textContent = nav.classList.contains('hidden') ? d.showFloat : d.hideFloat;
-}
+    <!-- 相关链接（已去掉副站，改为跳转仓库） -->
+    <div class="section" id="links">
+        <h2>相关链接</h2>
+        <ul>
+            <li>GitHub 主站：<a href="https://github.com/nanci-dev" target="_blank">nanci-dev</a></li>
+            <li>官网仓库：<a href="https://github.com/nanci-dev/nanci-site" target="_blank">nanci-dev/nanci-site</a></li>
+            <li>App 仓库：<a href="https://github.com/nanci-dev/LiteMask" target="_blank">nanci-dev/LiteMask</a></li>
+            <li>下载地址：<a href="https://github.com/nanci-dev/LiteMask/releases" target="_blank">Releases</a></li>
+            <li>快手主页：<a href="https://v.kuaishou.com/KwTy7y95" target="_blank">南辞</a></li>
+            <li>QQ 加好友：<a href="https://qm.qq.com/q/kMXbU7qvK2" target="_blank">点击添加</a></li>
+        </ul>
+    </div>
 
-function filterLinks(keyword){
-  keyword = keyword.toLowerCase().trim();
-  document.querySelectorAll('.link').forEach(function(el){
-    var name = (el.getAttribute('data-name') || el.querySelector('.name').textContent).toLowerCase();
-    if(!keyword || name.indexOf(keyword) !== -1){
-      el.style.display = '';
-    } else {
-      el.style.display = 'none';
-    }
-  });
-}
+    <div class="footer">
+        <p>© 2026 南辞 | 幻灵终端 LiteMask | 遵循 MIT 开源协议</p>
+    </div>
 
-function scrollToTop(){
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-window.addEventListener('scroll',function(){
-  var btn=document.getElementById('backTop');
-  if(window.scrollY > 400) btn.classList.add('show');
-  else btn.classList.remove('show');
-});
-
-function showNoticeIfNeeded(){
-  setTimeout(function(){
-    document.getElementById('notice').classList.add('show');
-  }, 600);
-}
-function closeNotice(){
-  document.getElementById('notice').classList.remove('show');
-}
-
-setLang(currentLang);
-showNoticeIfNeeded();
-
-var reveals=document.querySelectorAll('.reveal');
-var io=new IntersectionObserver(function(entries){
-  entries.forEach(function(e){
-    if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
-  });
-},{threshold:0.12,rootMargin:'0px 0px -6% 0px'});
-reveals.forEach(function(el){io.observe(el)});
-</script>
 </body>
-  </html>
+</html>
